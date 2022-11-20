@@ -2,11 +2,12 @@ package com.example.jwttutorial.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.util.Set;
-
+@Getter
 @Entity
 @Table(name = "USER_INFO")
 @NoArgsConstructor
