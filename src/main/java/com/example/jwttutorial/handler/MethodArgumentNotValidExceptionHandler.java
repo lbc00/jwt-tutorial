@@ -19,19 +19,20 @@ import static org.springframework.http.HttpStatus.BAD_REQUEST;
 @Order(Ordered.HIGHEST_PRECEDENCE)
 @ControllerAdvice
 public class MethodArgumentNotValidExceptionHandler {
+
     @ResponseStatus(BAD_REQUEST)
     @ResponseBody
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ErrorDto methodArgumentNotValidException(MethodArgumentNotValidException ex) {
         BindingResult result = ex.getBindingResult();
-        List<FieldError> fieldErrors = result.getFieldErrors();
+        List<org.springframework.validation.FieldError> fieldErrors = result.getFieldErrors();
         return processFieldErrors(fieldErrors);
     }
 
-    private ErrorDto processFieldErrors(List<FieldError> fieldErrors) {
+    private ErrorDto processFieldErrors(List<org.springframework.validation.FieldError> fieldErrors) {
         ErrorDto errorDto = new ErrorDto(BAD_REQUEST.value(), "@Valid Error");
-        for(FieldError fieldError : fieldErrors) {
-            errorDto.addfieldError(fieldError.getObjectName(), fieldError.getField(), fieldError.getDefaultMessage());
+        for (org.springframework.validation.FieldError fieldError: fieldErrors) {
+            errorDto.addFieldError(fieldError.getObjectName(), fieldError.getField(), fieldError.getDefaultMessage());
         }
         return errorDto;
     }

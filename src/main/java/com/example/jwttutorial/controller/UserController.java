@@ -1,6 +1,6 @@
 package com.example.jwttutorial.controller;
 
-import com.example.jwttutorial.dto.UserInfoDto;
+import com.example.jwttutorial.dto.UserDto;
 import com.example.jwttutorial.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -23,9 +23,9 @@ public class UserController {
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<UserInfoDto> signup(@Valid @RequestBody UserInfoDto userInfoDto) {
+    public ResponseEntity<UserDto> signup(@Valid @RequestBody UserDto userDto) {
         log.debug("signup");
-        return ResponseEntity.ok(userService.signup(userInfoDto));
+        return ResponseEntity.ok(userService.signup(userDto));
     }
 
     @GetMapping("/test")

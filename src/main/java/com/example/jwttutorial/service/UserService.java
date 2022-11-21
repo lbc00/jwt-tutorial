@@ -1,14 +1,16 @@
 package com.example.jwttutorial.service;
 
-import com.example.jwttutorial.dto.UserInfoDto;
+import com.example.jwttutorial.dto.UserDto;
 import com.example.jwttutorial.entity.Authority;
-import com.example.jwttutorial.entity.UserInfo;
+import com.example.jwttutorial.entity.User;
 import com.example.jwttutorial.exception.DuplicateMemberException;
+import com.example.jwttutorial.exception.NotFoundMemberException;
 import com.example.jwttutorial.repository.UserRepository;
+import com.example.jwttutorial.util.SecurityUtil;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.transaction.Transactional;
 import java.util.Collections;
 
 @Service
@@ -21,9 +23,9 @@ public class UserService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    @Transactional
-    public UserInfoDto signup(UserInfoDto userInfoDto) {
-        if(userRepository.findOneWithAuthoritiesByUsername(userInfoDto.getUsername()).orElse(null) != null){
+    @org.springframework.transaction.annotation.Transactional
+    public UserDto signup(UserDto userDto) {
+        if (userRepository.findOneWithAuthoritiesByUsername(userDto.getUsername()).orElse(null) != null) {
             throw new DuplicateMemberException("이미 가입되어 있는 유저입니다.");
         }
 
@@ -31,14 +33,28 @@ public class UserService {
                 .authorityName("ROLE_USER")
                 .build();
 
-        UserInfo userInfo = UserInfo.builder()
-                .username(userInfoDto.getUsername())
-                .password(passwordEncoder.encode(userInfoDto.getPassword()))
-                .nickname(userInfoDto.getNickname())
+        User user = User.builder()
+                .username(userDto.getUsername())
+                .password(passwordEncoder.encode(userDto.getPassword()))
+                .nickname(userDto.getNickname())
                 .authorities(Collections.singleton(authority))
                 .activated(true)
                 .build();
 
-        return UserInfoDto.from(userRepository.save(userInfo));
+        return UserDto.from(userRepository.save(user));
+    }
+
+    @org.springframework.transaction.annotation.Transactional(readOnly = true)
+    public UserDto getUserWithAuthorities(String username) {
+        return UserDto.from(userRepository.findOneWithAuthoritiesByUsername(username).orElse(null));
+    }
+
+    @Transactional(readOnly = true)
+    public UserDto getMyUserWithAuthorities() {
+        return UserDto.from(
+                SecurityUtil.getCurrentUsername()
+                        .flatMap(userRepository::findOneWithAuthoritiesByUsername)
+                        .orElseThrow(() -> new NotFoundMemberException("Member not found"))
+        );
     }
 }
