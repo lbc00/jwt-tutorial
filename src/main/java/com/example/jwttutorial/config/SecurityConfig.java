@@ -35,18 +35,17 @@ public class SecurityConfig {
         this.jwtAuthenticationEntryPoint = jwtAuthenticationEntryPoint;
         this.jwtAccessDeniedHandler = jwtAccessDeniedHandler;
     }
+
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
+
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
-        return (web) -> web.ignoring().antMatchers("/api/hello"
-                , "/api/authenticate"
-                , "/h2-console/**"
-                , "/favicon.cio"
-                , "/error"
-        );
+        return (web) -> web.ignoring().antMatchers("/h2-console/**"
+                , "/favicon.ico"
+                , "/error");
     }
 
     @Bean
@@ -74,7 +73,7 @@ public class SecurityConfig {
 
                 .and()
                 .authorizeRequests()
-                .antMatchers("/api/hellow").permitAll()
+                .antMatchers("/api/hello").permitAll()
                 .antMatchers("/api/authenticate").permitAll()
                 .antMatchers("/api/signup").permitAll()
 
@@ -82,6 +81,7 @@ public class SecurityConfig {
 
                 .and()
                 .apply(new JwtSecurityConfig(tokenProvider));
+
         return httpSecurity.build();
     }
 }
