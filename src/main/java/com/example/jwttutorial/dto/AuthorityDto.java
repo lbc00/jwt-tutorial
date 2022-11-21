@@ -9,6 +9,6 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class TokenDto {
-    private String token;
+public class AuthorityDto {
+    private String authorityName;
 }
