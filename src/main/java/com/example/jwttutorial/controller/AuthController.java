@@ -29,7 +29,6 @@ public class AuthController {
 
     @PostMapping("/authenticate")
     public ResponseEntity<TokenDto> authenticate(@Valid @RequestBody LoginDto loginDto) {
-        log.debug("sdfsfdsfsf");
         UsernamePasswordAuthenticationToken authenticationToken =
                 new UsernamePasswordAuthenticationToken(loginDto.getUsername(), loginDto.getPassword());
 
